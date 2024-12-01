@@ -20,7 +20,7 @@ export const handler = async (event) => {
         if (!keyword1) {
             return {
                 statusCode:404,
-                messages: [
+                data: [
                     { contentType: "PlainText", content: "Please provide at least one keyword to search." }
                 ]
             };
@@ -54,7 +54,7 @@ export const handler = async (event) => {
         if (hits.length === 0) {
             return {
                 statusCode:200,
-                messages: [
+                data: [
                     { contentType: "PlainText", content: `No results found for keywords: ${keywords.join(", ")}` }
                 ]
             };
@@ -72,7 +72,7 @@ export const handler = async (event) => {
 
         return {
             statusCode:200,
-            messages: [
+            data: [
                 {
                     contentType: "CustomPayload",
                     content: JSON.stringify(responseCards)
@@ -83,7 +83,7 @@ export const handler = async (event) => {
         console.error("Error in Lambda:", error);
         return {
             statusCode:500,
-            messages: [
+            data: [
                 { contentType: "PlainText", content: "An error occurred while processing your request." }
             ]
         };
