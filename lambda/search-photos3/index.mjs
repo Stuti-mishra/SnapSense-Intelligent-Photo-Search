@@ -13,23 +13,13 @@ export const handler = async (event) => {
         console.log("Lex Event:", JSON.stringify(event, null, 2));
 
         // Extract slots from the Lex event
-        const slots = event.sessionState.intent.slots || {};
-        const keyword1 = slots.keyword1?.value?.originalValue;
-        const keyword2 = slots.keyword2?.value?.originalValue;
+        const keyword1 = event.keyword1
+        const keyword2 = event.keyword2
 
         // Ensure at least one keyword is provided
         if (!keyword1) {
             return {
-                sessionState: {
-                    ...event.sessionState,
-                    dialogAction: {
-                        type: "Close",
-                    },
-                    intent: {
-                        name: event.sessionState.intent.name,
-                        state: "Failed"
-                    }
-                },
+                statusCode:404,
                 messages: [
                     { contentType: "PlainText", content: "Please provide at least one keyword to search." }
                 ]
@@ -63,16 +53,7 @@ export const handler = async (event) => {
         const hits = searchResult.body.hits.hits || [];
         if (hits.length === 0) {
             return {
-                sessionState: {
-                    ...event.sessionState,
-                    dialogAction: {
-                        type: "Close",
-                    },
-                    intent: {
-                        name: event.sessionState.intent.name,
-                        state: "Failed"
-                    }
-                },
+                statusCode:200,
                 messages: [
                     { contentType: "PlainText", content: `No results found for keywords: ${keywords.join(", ")}` }
                 ]
@@ -81,25 +62,16 @@ export const handler = async (event) => {
 
         // Prepare response cards
         const responseCards = hits.map((hit) => {
-            const { objectKey, bucket, labels } = hit._source;
+            const { s3_key, s3_bucket, labels } = hit._source;
             return {
-                title: objectKey,
-                imageUrl: `https://${bucket}.s3.amazonaws.com/${objectKey}`,
+                title: s3_bucket,
+                imageUrl: `https://${s3_bucket}.s3.amazonaws.com/${s3_key}`,
                 subtitle: `Labels: ${labels.join(", ")}`
             };
         });
 
         return {
-            sessionState: {
-                ...event.sessionState,
-                dialogAction: {
-                    type: "Close",
-                },
-                intent: {
-                    name: event.sessionState.intent.name,
-                    state: "Fulfilled"
-                }
-            },
+            statusCode:200,
             messages: [
                 {
                     contentType: "CustomPayload",
@@ -110,16 +82,7 @@ export const handler = async (event) => {
     } catch (error) {
         console.error("Error in Lambda:", error);
         return {
-            sessionState: {
-                ...event.sessionState,
-                dialogAction: {
-                    type: "Close",
-                },
-                intent: {
-                    name: event.sessionState.intent.name,
-                    state: "Failed"
-                }
-            },
+            statusCode:500,
             messages: [
                 { contentType: "PlainText", content: "An error occurred while processing your request." }
             ]
