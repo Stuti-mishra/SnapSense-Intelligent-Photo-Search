@@ -53,7 +53,7 @@ apigClientFactory.newClient = function (config) {
 
     
     // extract endpoint and path from url
-    var invokeUrl = 'https://ro2x2n7ua3.execute-api.us-east-1.amazonaws.com/v2';
+    var invokeUrl = 'https://skexxgqztk.execute-api.us-east-1.amazonaws.com/v2';
     var endpoint = /(^https?:\/\/[^\/]+)/g.exec(invokeUrl)[1];
     var pathComponent = invokeUrl.substring(endpoint.length);
 
@@ -81,42 +81,6 @@ apigClientFactory.newClient = function (config) {
 
     var apiGatewayClient = apiGateway.core.apiGatewayClientFactory.newClient(simpleHttpClientConfig, sigV4ClientConfig);
     
-    
-    
-    apigClient.photosPut = function (params, body, additionalParams) {
-        if(additionalParams === undefined) { additionalParams = {}; }
-        
-        apiGateway.core.utils.assertParametersDefined(params, ['filename', 'x-amz-meta-customLabels'], ['body']);
-        
-        var photosPutRequest = {
-            verb: 'put'.toUpperCase(),
-            path: pathComponent + uritemplate('/photos').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, ['x-amz-meta-customLabels']),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['filename', ]),
-            body: body
-        };
-        
-        
-        return apiGatewayClient.makeRequest(photosPutRequest, authType, additionalParams, config.apiKey);
-    };
-    
-    
-    apigClient.photosOptions = function (params, body, additionalParams) {
-        if(additionalParams === undefined) { additionalParams = {}; }
-        
-        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
-        
-        var photosOptionsRequest = {
-            verb: 'options'.toUpperCase(),
-            path: pathComponent + uritemplate('/photos').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
-            body: body
-        };
-        
-        
-        return apiGatewayClient.makeRequest(photosOptionsRequest, authType, additionalParams, config.apiKey);
-    };
     
     
     apigClient.searchGet = function (params, body, additionalParams) {
@@ -155,42 +119,6 @@ apigClientFactory.newClient = function (config) {
     };
     
     
-    apigClient.search2Get = function (params, body, additionalParams) {
-        if(additionalParams === undefined) { additionalParams = {}; }
-        
-        apiGateway.core.utils.assertParametersDefined(params, ['q'], ['body']);
-        
-        var search2GetRequest = {
-            verb: 'get'.toUpperCase(),
-            path: pathComponent + uritemplate('/search2').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['q']),
-            body: body
-        };
-        
-        
-        return apiGatewayClient.makeRequest(search2GetRequest, authType, additionalParams, config.apiKey);
-    };
-    
-    
-    apigClient.search2Options = function (params, body, additionalParams) {
-        if(additionalParams === undefined) { additionalParams = {}; }
-        
-        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
-        
-        var search2OptionsRequest = {
-            verb: 'options'.toUpperCase(),
-            path: pathComponent + uritemplate('/search2').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
-            body: body
-        };
-        
-        
-        return apiGatewayClient.makeRequest(search2OptionsRequest, authType, additionalParams, config.apiKey);
-    };
-    
-    
     apigClient.uploadPut = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
@@ -199,13 +127,31 @@ apigClientFactory.newClient = function (config) {
         var uploadPutRequest = {
             verb: 'put'.toUpperCase(),
             path: pathComponent + uritemplate('/upload').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, ['filename', 'x-amz-meta-customLabels']),
-            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            headers: apiGateway.core.utils.parseParametersToObject(params, ['x-amz-meta-customLabels']),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, ['filename', ]),
             body: body
         };
         
         
         return apiGatewayClient.makeRequest(uploadPutRequest, authType, additionalParams, config.apiKey);
+    };
+    
+    
+    apigClient.uploadOptions = function (params, body, additionalParams) {
+        if(additionalParams === undefined) { additionalParams = {}; }
+        
+        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        
+        var uploadOptionsRequest = {
+            verb: 'options'.toUpperCase(),
+            path: pathComponent + uritemplate('/upload').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
+            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
+            body: body
+        };
+        
+        
+        return apiGatewayClient.makeRequest(uploadOptionsRequest, authType, additionalParams, config.apiKey);
     };
     
 

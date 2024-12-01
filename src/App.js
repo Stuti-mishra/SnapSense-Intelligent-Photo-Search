@@ -28,6 +28,48 @@ function App() {
   const [uploadStatus, setUploadStatus] = useState("");
   const [searchStatus, setSearchStatus] = useState("");
 
+  const decodeAndStore = async(parsedResults)=>{
+    try {
+      // Process each result to decode the Base64 image
+      const decodedResults = await Promise.all(
+        parsedResults.map(async (photo) => {
+          const response = await fetch(photo.imageUrl,{mode:'cors'});
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch image for ${photo.title}`);
+          }
+
+          // Assuming the response is Base64-encoded text
+          const base64Image = await response.text();
+
+          // Decode Base64 into binary
+          const binaryString = atob(base64Image);
+
+          // Convert binary string to an ArrayBuffer for rendering
+          const binaryArray = Uint8Array.from(binaryString, (char) =>
+            char.charCodeAt(0)
+          );
+
+          // Create a Blob from the binary data
+          const blob = new Blob([binaryArray], { type: "image/jpeg" }); // Adjust MIME type if necessary
+
+          // Create a URL for the Blob
+          const objectUrl = URL.createObjectURL(blob);
+
+          // Return the updated photo object with the decoded image
+          return {
+            ...photo,
+            decodedImageUrl: objectUrl, // Add decoded image URL to the object
+          };
+        })
+      );
+      // Update the state with the decoded results
+      setResults(decodedResults);
+    } catch (error) {
+      console.error("Error decoding images:", error);
+    }
+  }
+
   // Simulate photo upload
   const handleUpload = async () => {
     if (!photo) {
@@ -51,7 +93,7 @@ function App() {
       const reader = new FileReader();
       reader.onloadend = async (e) =>{
         const fileData = e.target.result.split(",")[1];
-        const response = await apigClient.photosPut(
+        const response = await apigClient.uploadPut(
           params,
           fileData,
           additionalParams
@@ -84,12 +126,14 @@ function App() {
           "Content-Type": "application/json",
         },
       };
-      const response = await apigClient.search2Options(params, {}, additionalParams);
+      const response = await apigClient.searchGet(params, {}, additionalParams);
       console.log("Search Response:", response);
 
-      if (response.data.statusCode === "200" && response.data.data) {
-        const parsedResults = JSON.parse(response.data.data.content); // Parse the response
-        setResults(parsedResults); // Update results state
+      if (response.status === 200  && response.data.data) {
+        const parsedResults = JSON.parse(response.data.data[0].content); // Parse the response
+        console.log('Parsed',parsedResults)
+        decodeAndStore(parsedResults)
+        // setResults(parsedResults); // Update results state
         setSearchStatus("");
       } else {
         setSearchStatus("No results found.");
@@ -161,25 +205,33 @@ function App() {
         </Typography>
         <Grid container spacing={3}>
           {results.length > 0 ? (
-            results.map((photo, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    image={photo.objectKey}
-                    alt={`Photo ${index}`}
-                    height="140"
-                  />
-                  <CardContent>
-                    <Typography variant="body2">
-                      Labels: {photo.labels.join(", ") || "No labels"}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))
+            results.map((photo, index) => {
+              console.log("Photo", photo);
+              // const base64Image = photo.imageUrl;
+              // const dataUrl = `data:image/jpeg;base64,${base64Image}`;
+              const labels = photo.subtitle.replace("Labels: ", "").split(", ");
+              return (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card>
+                    <CardMedia
+                      component="img"
+                      image={photo.decodedImageUrl}
+                      alt={`Photo ${index}`}
+                      height="140"
+                    />
+                    <CardContent>
+                      <Typography variant="body2">
+                        Labels: {labels.join(", ") || "No labels"}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })
           ) : (
-            <Typography>No photos found.</Typography>
+            <Typography style={{ marginTop: "50px" }}>
+              No photos found.
+            </Typography>
           )}
         </Grid>
       </div>
