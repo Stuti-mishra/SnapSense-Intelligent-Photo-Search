@@ -9,7 +9,7 @@ from botocore.awsrequest import AWSRequest
 from botocore.credentials import Credentials
 import http.client
 import urllib.parse
-
+####Testing pipeline
 # Initialize AWS Rekognition client
 rekognition = boto3.client('rekognition')
 s3 = boto3.client('s3')
