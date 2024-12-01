@@ -153,7 +153,7 @@ function App() {
   return (
     <Container maxWidth="md" style={{ marginTop: "20px" }}>
       <Typography variant="h4" gutterBottom>
-        Photo Album (Pipeline Demo)
+        Photo Album (Demo)
       </Typography>
 
       {/* Upload Photo Section */}
