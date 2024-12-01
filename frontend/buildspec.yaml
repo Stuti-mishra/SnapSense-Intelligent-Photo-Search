@@ -6,6 +6,7 @@ phases:
       nodejs: 18 # Ensure the correct Node.js version for your app
     commands:
       - echo Installing dependencies...
+      - cd frontend
       - npm install # Install project dependencies
 
   build:
