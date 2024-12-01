@@ -6,15 +6,16 @@ phases:
       nodejs: 18 # Ensure the correct Node.js version for your app
     commands:
       - echo Installing dependencies...
-      - cd frontend
+      - cd frontend # Navigate to the frontend directory
       - npm install # Install project dependencies
 
   build:
     commands:
       - echo Running build script...
+      - cd frontend # Ensure we are still in the frontend directory
       - npm run build # Build the React application
 
 artifacts:
   files:
     - '**/*' # Include all files in the artifact
-  base-directory: build # Specify the `build` directory as the artifact's base
+  base-directory: frontend/build # Specify the `build` directory as the artifact's base
