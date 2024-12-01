@@ -3,19 +3,23 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18 # Ensure the correct Node.js version for your app
+      nodejs: 18
     commands:
-      - echo Installing dependencies...
-      - cd frontend # Navigate to the frontend directory
+      - echo "Checking current directory..."
+      - pwd # Print the current working directory
+      - echo "Listing files in the current directory..."
+      - ls -la
+      - echo "Navigating to the frontend directory..."
+      - cd frontend # Ensure you navigate to the frontend directory
+      - echo "Installing dependencies..."
       - npm install # Install project dependencies
 
   build:
     commands:
-      - echo Running build script...
-      - cd frontend # Ensure we are still in the frontend directory
+      - echo "Building the React app..."
       - npm run build # Build the React application
 
 artifacts:
   files:
-    - '**/*' # Include all files in the artifact
+    - '**/*'
   base-directory: frontend/build # Specify the `build` directory as the artifact's base
