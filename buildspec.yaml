@@ -3,17 +3,17 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18 # Replace with your Node.js version
+      nodejs: 18 # Ensure the correct Node.js version for your app
     commands:
-      - npm install
+      - echo Installing dependencies...
+      - npm install # Install project dependencies
+
   build:
     commands:
-      - npm run build
-  post_build:
-    commands:
-      - echo "Build completed."
+      - echo Running build script...
+      - npm run build # Build the React application
 
 artifacts:
   files:
-    - '**/*' # Include all files
-  base-directory: build # React's output directory
+    - '**/*' # Include all files in the artifact
+  base-directory: build # Specify the `build` directory as the artifact's base
